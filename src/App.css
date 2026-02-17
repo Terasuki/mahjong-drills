@@ -1,0 +1,134 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* The overall container for the whole screen */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  background-color: #111; /* Dark background from mockup */
+  padding: 20px;
+  box-sizing: border-box;
+  gap: 20px;
+}
+
+/* --- The Top Controls Area (Purple Box) --- */
+.controls-section {
+  flex: 0 0 80px; /* Fixed height of 80px */
+  border: 3px solid #8A2BE2; /* Purple */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+}
+
+/* --- The Main Table Area (Green Box) --- */
+.table-grid {
+  flex: 1;
+  border: 3px solid #00FF7F;
+  display: grid;
+  /* Side columns (hands) are fixed. 
+     Middle columns are split: 1fr for calls, 2fr for the center discards/info 
+  */
+  grid-template-columns: 140px 1fr 2fr 1fr 140px;
+  grid-template-rows:    100px 1fr 2fr 1fr 100px;
+  gap: 10px;
+  padding: 10px;
+
+  /* Map updated to ensure the "Discards" and "Info" occupy the center properly 
+  */
+  grid-template-areas:
+    ".          .           hand-top    .           .          "
+    ".          calls-tl    disc-top    calls-tr    .          "
+    "hand-left  disc-left   info        disc-right  hand-right "
+    ".          calls-bl    disc-bottom calls-br    .          "
+    ".          .           hand-bottom .           .          ";
+}
+
+/* --- Generic styling for placeholders so we can see them --- */
+.placeholder-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  background: rgba(255,255,255,0.05); /* Slight background to see empty zones */
+}
+
+/* Helper classes to assign React divs to grid areas and match mockup colors */
+.area-hand-top { grid-area: hand-top; border: 2px solid blue; }
+.area-hand-bottom { grid-area: hand-bottom; border: 2px solid blue; }
+.area-hand-left { grid-area: hand-left; border: 2px solid blue; }
+.area-hand-right { grid-area: hand-right; border: 2px solid blue; }
+
+.area-disc-top { grid-area: disc-top; border: 2px solid white; }
+.area-disc-bottom { grid-area: disc-bottom; border: 2px solid white; }
+.area-disc-left { grid-area: disc-left; border: 2px solid white; }
+.area-disc-right { grid-area: disc-right; border: 2px solid white; }
+
+.area-calls-tl { grid-area: calls-tl; border: 2px solid red; }
+.area-calls-tr { grid-area: calls-tr; border: 2px solid red; }
+.area-calls-bl { grid-area: calls-bl; border: 2px solid red; }
+.area-calls-br { grid-area: calls-br; border: 2px solid red; }
+
+.area-info { grid-area: info; border: 2px solid cyan; }
+
+.hand-container {
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Rotate side players so tiles face the center */
+.hand-container.right { transform: rotate(-90deg); }
+.hand-container.left { transform: rotate(90deg); }
+.hand-container.top { transform: rotate(180deg); }
+
+.info-center {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #00FF7F;
+}
