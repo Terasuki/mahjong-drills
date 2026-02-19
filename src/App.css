@@ -1,47 +1,78 @@
-/* The overall container for the whole screen */
 .app-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   height: 100vh;
   width: 100vw;
-  background-color: #111; /* Dark background from mockup */
-  padding: 20px;
-  box-sizing: border-box;
-  gap: 20px;
+  background-color: #111;
+  overflow: hidden;
 }
 
-/* --- The Top Controls Area (Purple Box) --- */
+.sidebar {
+  width: 250px;
+  background-color: #1a1a1a;
+  border-right: 2px solid #8A2BE2;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
 .controls-section {
-  flex: 0 0 80px; /* Fixed height of 80px */
-  border: 3px solid #8A2BE2; /* Purple */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  color: white;
+}
+
+.next-btn {
+  padding: 15px;
+  background: #8A2BE2;
+  border: none;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.next-btn:disabled {
+  background: #444;
+}
+
+.game-area {
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
-  font-weight: bold;
+  padding: 20px;
+  background: radial-gradient(circle, #1a2e1a 0%, #111 100%);
 }
 
-/* --- The Main Table Area (Green Box) --- */
+.table-grid-wrapper {
+  width: 90vmin; 
+  height: 90vmin;
+  display: flex;
+  margin: auto;
+}
+
 .table-grid {
   flex: 1;
   border: 3px solid #00FF7F;
   display: grid;
-  /* Side columns (hands) are fixed. 
-     Middle columns are split: 1fr for calls, 2fr for the center discards/info 
-  */
-  grid-template-columns: 140px 1fr 2fr 1fr 140px;
-  grid-template-rows:    100px 1fr 2fr 1fr 100px;
-  gap: 10px;
-  padding: 10px;
+  
+  grid-template-columns: 1fr 5fr 5fr 5fr 1fr;
+  grid-template-rows:    1fr 5fr 5fr 5fr 1fr;
 
-  /* Map updated to ensure the "Discards" and "Info" occupy the center properly 
-  */
   grid-template-areas:
-    ".          .           hand-top    .           .          "
-    ".          calls-tl    disc-top    calls-tr    .          "
+    ".          hand-top    hand-top    hand-top    .          "
+    "hand-left  calls-tl    disc-top    calls-tr    hand-right "
     "hand-left  disc-left   info        disc-right  hand-right "
-    ".          calls-bl    disc-bottom calls-br    .          "
-    ".          .           hand-bottom .           .          ";
+    "hand-left  calls-bl    disc-bottom calls-br    hand-right "
+    ".          hand-bottom hand-bottom hand-bottom .          ";
+}
+
+.table-grid > div {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden; 
 }
 
 /* --- Generic styling for placeholders so we can see them --- */
@@ -51,7 +82,7 @@
   align-items: center;
   color: white;
   font-weight: bold;
-  background: rgba(255,255,255,0.05); /* Slight background to see empty zones */
+  background: rgba(255,255,255,0.05);
 }
 
 /* Helper classes to assign React divs to grid areas and match mockup colors */
@@ -70,13 +101,26 @@
 .area-calls-bl { grid-area: calls-bl; border: 2px solid red; }
 .area-calls-br { grid-area: calls-br; border: 2px solid red; }
 
-.area-info { grid-area: info; border: 2px solid cyan; }
+.area-info {
+  grid-area: info;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid cyan;
+  background: rgba(0, 255, 255, 0.05);
+}
+
+.info-center {
+  width: 90%;
+}
 
 .hand-container {
   display: flex;
   gap: 2px;
-  justify-content: center; 
+  justify-content: flex-start; 
   align-items: center;
+  width: 100%;
+  height: 100%;
 }
 
 .hand-container.right { transform: rotate(-90deg); }
@@ -88,9 +132,11 @@
 .area-disc-top { transform: rotate(180deg); }
 
 .info-center {
-  text-align: center;
-  font-size: 0.8rem;
-  color: #00FF7F;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .melds-container {
@@ -113,13 +159,19 @@
 .melds-container.top { transform: rotate(180deg); }
 
 
-/* Score Display Styling */
 .scores-grid {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 100px 1fr;
+  grid-template-rows: 1fr 100px 1fr;
+  grid-template-areas:
+    ".      top    ."
+    "left   info   right"
+    ".      bottom .";
+  
+  width: 300px;
+  height: 260px;
   align-items: center;
-  gap: 5px;
-  font-family: 'Courier New', Courier, monospace;
+  justify-items: center;
 }
 
 .middle-row {
@@ -130,27 +182,28 @@
 
 .score-item {
   background: rgba(0, 0, 0, 0.8);
-  padding: 4px 8px;
+  padding: 4px;
   border-radius: 4px;
-  min-width: 90px; /* Increased to fit the wind char */
-  text-align: center;
+  width: 80px;
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border: 1px solid #444;
   color: #ccc;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
+  font-size: 0.8rem;
 }
+
+.score-item.top    { grid-area: top;    transform: rotate(180deg); }
+.score-item.bottom { grid-area: bottom; }
+.score-item.left   { grid-area: left;   transform: rotate(90deg); }
+.score-item.right  { grid-area: right;  transform: rotate(-90deg); }
 
 .score-item.is-oya {
-  border-color: #FFD700; /* Gold border */
+  border-color: #FFD700;
   color: #FFD700;
-  box-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
   font-weight: bold;
 }
-
-/* Optional: Rotate side scores to face the player positions */
-.score-item.left { transform: rotate(90deg); }
-.score-item.right { transform: rotate(-90deg); }
-.score-item.top { transform: rotate(180deg); }
 
 .round-name {
   font-size: 1.2rem;
@@ -159,13 +212,16 @@
 }
 
 .round-info {
+  grid-area: info;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   background: #222;
-  padding: 5px 10px;
   border: 1px solid #00FF7F;
-  border-radius: 2px;
+  border-radius: 4px;
+  width: 90px;
+  height: 90px;
 }
 
 .dora-display {
@@ -174,4 +230,51 @@
   gap: 5px;
   margin-top: 4px;
   font-size: 0.7rem;
+}
+
+.hand-container, .melds-container {
+  display: flex;
+  gap: 2px;
+  justify-content: flex-start; /* This works for Bottom, Top, and Left */
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Fix the Right side: 'flex-end' pulls the tiles to the visual top 
+   because the axis is inverted by -90deg rotation */
+.hand-container.right, 
+.melds-container.right { 
+  justify-content: flex-end; 
+}
+
+/* Ensure the side containers are tall enough to fill the grid area 
+   since 'width: 100%' on a rotated element refers to the narrow grid width */
+.area-hand-left {
+  display: flex;
+  justify-content: center; 
+  align-items: flex-start; /* Aligns to top of the grid cell */
+}
+
+/* Right Hand: Starts at the Bottom */
+.area-hand-right {
+  display: flex;
+  justify-content: center;
+  /* Change this to flex-end to push the container to the bottom of the grid area */
+  align-items: flex-end; 
+}
+
+/* Ensure the rotated containers fill their tracks */
+.hand-container.left, 
+.hand-container.right {
+  width: 100%; 
+  height: 40px; 
+}
+
+.hand-container.right, 
+.melds-container.right { 
+  /* Reset this to flex-start; let the parent's 'align-items' handle the vertical position */
+  justify-content: flex-start; 
+  /* Important: ensure the rotation center is correct if you have alignment issues */
+  transform-origin: center;
 }

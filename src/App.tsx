@@ -45,6 +45,21 @@ function App() {
       if (!prev) return null;
       const next = { ...prev };
 
+      if (event.type === 'start_kyoku') {
+        return {
+          bakaze: event.bakaze,
+          kyoku: event.kyoku,
+          honba: event.honba,
+          dora_marker: event.dora_marker,
+          oya: event.oya,
+          tehais: event.tehais.map(hand => sortTiles(hand)),
+          discards: [[], [], [], []],
+          melds: [[], [], [], []],
+          scores: event.scores,
+          type: 'start_kyoku',
+        };
+      }
+
       if (event.type === 'tsumo') {
         const newTehais = [...next.tehais];
         newTehais[event.actor] = [...newTehais[event.actor], event.pai];
@@ -95,94 +110,112 @@ function App() {
 
   return (
     <div className="app-container">
-      <div className="controls-section">
-        <button onClick={handleNext} disabled={cursor >= events.length}>
-          Next ({cursor}/{events.length})
-        </button>
-      </div>
+      {/* Left Sidebar for Controls */}
+      <aside className="sidebar">
+        <div className="controls-section">
+          <h2>Mahjong Replay</h2>
+          <div className="stats">
+            <p>Event: {cursor} / {events.length}</p>
+          </div>
+          <button 
+            className="next-btn" 
+            onClick={handleNext} 
+            disabled={cursor >= events.length}
+          >
+            Next Move
+          </button>
+        </div>
+      </aside>
+      <main className="game-area">
+        <div className="table-grid-wrapper">
+        <div className="table-grid">
+          {/* Render Hands */}
+          {gameState.tehais.map((hand, index) => {
+            const areaMap = ['bottom', 'right', 'top', 'left'];
+            
+            return (
+              <div key={index} className={`placeholder-box area-hand-${areaMap[index]}`}>
+                <div className={`hand-container ${areaMap[index]}`}>
+                  {hand.map((tileId, tIdx) => (
+                    <Tile key={tIdx} id={tileId} size='35px' />
+                  ))}
+                </div>
+              </div>
+            );
+          })}
 
-      <div className="table-grid">
-        {/* Render Hands */}
-        {gameState.tehais.map((hand, index) => {
-          const areaMap = ["bottom", "right", "top", "left"];
+          {/* Center Info */}
+          <div className="placeholder-box area-info">
+            <div className="info-center">
+              <div className="scores-grid">
+                {/* Top Player (Index 2) */}
+                <div className={`score-item top ${gameState.oya === 2 ? 'is-oya' : ''}`}>
+                  ({getWind(2, gameState.oya)}) {gameState.scores[2]}
+                </div>
+
+                {/* Left Player (Index 3) */}
+                <div className={`score-item left ${gameState.oya === 3 ? 'is-oya' : ''}`}>
+                  ({getWind(3, gameState.oya)}) {gameState.scores[3]}
+                </div>
+
+                {/* Center Round Info */}
+                <div className="round-info">
+                  <div className="round-name">
+                    {gameState.bakaze}{gameState.kyoku}-{gameState.honba}
+                  </div>
+                  <div className="dora-display">
+                    <Tile id={gameState.dora_marker} size="24px" />
+                  </div>
+                </div>
+
+                {/* Right Player (Index 1) */}
+                <div className={`score-item right ${gameState.oya === 1 ? 'is-oya' : ''}`}>
+                  ({getWind(1, gameState.oya)}) {gameState.scores[1]}
+                </div>
+
+                {/* Bottom Player (Index 0) */}
+                <div className={`score-item bottom ${gameState.oya === 0 ? 'is-oya' : ''}`}>
+                  ({getWind(0, gameState.oya)}) {gameState.scores[0]}
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* Melds */}
+          {gameState.melds.map((playerMelds, index) => {
+          const callAreas = ['area-calls-br', 'area-calls-tr', 'area-calls-tl', 'area-calls-bl'];
+          const areaMap = ['bottom', 'right', 'top', 'left'];
           
           return (
-            <div key={index} className={`placeholder-box area-hand-${areaMap[index]}`}>
-              <div className={`hand-container ${areaMap[index]}`}>
-                {hand.map((tileId, tIdx) => (
-                  <Tile key={tIdx} id={tileId} size={index === 0 ? "50px" : "35px"} />
+            <div key={`meld-player-${index}`} className={`placeholder-box ${callAreas[index]}`}>
+              <div className={`melds-container ${areaMap[index]}`}>
+                {playerMelds.map((meld, mIdx) => (
+                  <div key={mIdx} className="meld-group">
+                    {meld.map((tileId, tIdx) => (
+                      <Tile key={tIdx} id={tileId} size="30px" />
+                    ))}
+                  </div>
                 ))}
               </div>
             </div>
           );
         })}
 
-        {/* Center Info */}
-        <div className="placeholder-box area-info">
-        <div className="info-center">
-          <div className="scores-grid">
-            <div className={`score-item top ${gameState.oya === 2 ? 'is-oya' : ''}`}>
-              ({getWind(2, gameState.oya)}) {gameState.scores[2]}
-            </div>
-            
-            <div className="middle-row">
-              <div className={`score-item left ${gameState.oya === 3 ? 'is-oya' : ''}`}>
-                ({getWind(3, gameState.oya)}) {gameState.scores[3]}
-              </div>
-              
-              <div className="round-info">
-                <div className="round-name">{gameState.bakaze}{gameState.kyoku}-{gameState.honba}</div>
-                <div className="dora-display">
-                  <span>Dora</span>
-                  <Tile id={gameState.dora_marker} size="30px" />
-                </div>
-              </div>
-
-              <div className={`score-item right ${gameState.oya === 1 ? 'is-oya' : ''}`}>
-                ({getWind(1, gameState.oya)}) {gameState.scores[1]}
-              </div>
-            </div>
-
-            <div className={`score-item bottom ${gameState.oya === 0 ? 'is-oya' : ''}`}>
-              ({getWind(0, gameState.oya)}) {gameState.scores[0]}
-            </div>
-          </div>
-        </div>
-      </div>
-        {/* Melds */}
-        {gameState.melds.map((playerMelds, index) => {
-        const callAreas = ["area-calls-br", "area-calls-tr", "area-calls-tl", "area-calls-bl"];
-        const areaMap = ["bottom", "right", "top", "left"];
-        
-        return (
-          <div key={`meld-player-${index}`} className={`placeholder-box ${callAreas[index]}`}>
-            <div className={`melds-container ${areaMap[index]}`}>
-              {playerMelds.map((meld, mIdx) => (
-                <div key={mIdx} className="meld-group">
-                  {meld.map((tileId, tIdx) => (
+          {/* Discards */}
+          {gameState.discards?.map((discards, index) => {
+            const areaMap = ['bottom', 'right', 'top', 'left'];
+            return (
+              <div key={`disc-${index}`} className={`placeholder-box area-disc-${areaMap[index]}`}>
+                <div className={`discard-grid ${areaMap[index]}`}>
+                  {discards.map((tileId, tIdx) => (
                     <Tile key={tIdx} id={tileId} size="30px" />
                   ))}
                 </div>
-              ))}
-            </div>
-          </div>
-        );
-      })}
-
-        {/* Discards */}
-        {gameState.discards?.map((discards, index) => {
-          const areaMap = ["bottom", "right", "top", "left"];
-          return (
-            <div key={`disc-${index}`} className={`placeholder-box area-disc-${areaMap[index]}`}>
-              <div className={`discard-grid ${areaMap[index]}`}>
-                {discards.map((tileId, tIdx) => (
-                  <Tile key={tIdx} id={tileId} size="30px" />
-                ))}
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+        </div>
+      </main>
     </div>
   );
 }
