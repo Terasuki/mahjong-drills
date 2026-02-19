@@ -9,3 +9,9 @@ export const TILE_ORDER: Record<string, number> = {
 export const sortTiles = (tiles: string[]): string[] => {
   return [...tiles].sort((a, b) => (TILE_ORDER[a] || 99) - (TILE_ORDER[b] || 99));
 };
+
+export const getWind = (playerIdx: number, oya: number) => {
+  const winds = ["E", "S", "W", "N"];
+  const relativePos = (playerIdx - oya + 4) % 4;
+  return winds[relativePos];
+};

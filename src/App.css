@@ -111,3 +111,67 @@
 .melds-container.right { transform: rotate(-90deg); }
 .melds-container.left { transform: rotate(90deg); }
 .melds-container.top { transform: rotate(180deg); }
+
+
+/* Score Display Styling */
+.scores-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.middle-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.score-item {
+  background: rgba(0, 0, 0, 0.8);
+  padding: 4px 8px;
+  border-radius: 4px;
+  min-width: 90px; /* Increased to fit the wind char */
+  text-align: center;
+  border: 1px solid #444;
+  color: #ccc;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.score-item.is-oya {
+  border-color: #FFD700; /* Gold border */
+  color: #FFD700;
+  box-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+  font-weight: bold;
+}
+
+/* Optional: Rotate side scores to face the player positions */
+.score-item.left { transform: rotate(90deg); }
+.score-item.right { transform: rotate(-90deg); }
+.score-item.top { transform: rotate(180deg); }
+
+.round-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+.round-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #222;
+  padding: 5px 10px;
+  border: 1px solid #00FF7F;
+  border-radius: 2px;
+}
+
+.dora-display {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 4px;
+  font-size: 0.7rem;
+}

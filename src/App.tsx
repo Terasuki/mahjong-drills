@@ -2,7 +2,7 @@ import Tile from './components/Tiles';
 import './App.css'
 import { useState, useEffect } from 'react';
 import type { GameState, Event } from './types';
-import { sortTiles } from './utilities/mahjong';
+import { sortTiles, getWind } from './utilities/mahjong';
 
 function App() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -96,7 +96,6 @@ function App() {
   return (
     <div className="app-container">
       <div className="controls-section">
-        <div>Round: {gameState.bakaze}{gameState.kyoku} | Honba: {gameState.honba}</div>
         <button onClick={handleNext} disabled={cursor >= events.length}>
           Next ({cursor}/{events.length})
         </button>
@@ -120,11 +119,36 @@ function App() {
 
         {/* Center Info */}
         <div className="placeholder-box area-info">
-          <div className="info-center">
-            <p>Dora</p>
-            <Tile id={gameState.dora_marker} size="40px" />
+        <div className="info-center">
+          <div className="scores-grid">
+            <div className={`score-item top ${gameState.oya === 2 ? 'is-oya' : ''}`}>
+              ({getWind(2, gameState.oya)}) {gameState.scores[2]}
+            </div>
+            
+            <div className="middle-row">
+              <div className={`score-item left ${gameState.oya === 3 ? 'is-oya' : ''}`}>
+                ({getWind(3, gameState.oya)}) {gameState.scores[3]}
+              </div>
+              
+              <div className="round-info">
+                <div className="round-name">{gameState.bakaze}{gameState.kyoku}-{gameState.honba}</div>
+                <div className="dora-display">
+                  <span>Dora</span>
+                  <Tile id={gameState.dora_marker} size="30px" />
+                </div>
+              </div>
+
+              <div className={`score-item right ${gameState.oya === 1 ? 'is-oya' : ''}`}>
+                ({getWind(1, gameState.oya)}) {gameState.scores[1]}
+              </div>
+            </div>
+
+            <div className={`score-item bottom ${gameState.oya === 0 ? 'is-oya' : ''}`}>
+              ({getWind(0, gameState.oya)}) {gameState.scores[0]}
+            </div>
           </div>
         </div>
+      </div>
         {/* Melds */}
         {gameState.melds.map((playerMelds, index) => {
         const callAreas = ["area-calls-br", "area-calls-tr", "area-calls-tl", "area-calls-bl"];
