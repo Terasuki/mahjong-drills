@@ -27,6 +27,7 @@ function App() {
             oya: setup.oya,
             tehais: setup.tehais.map(hand => sortTiles(hand)),
             discards: [[], [], [], []],
+            melds: [[], [], [], []],
             scores: setup.scores,
             type: 'start_kyoku',
           });
@@ -37,33 +38,56 @@ function App() {
   }, []);
 
   const handleNext = () => {
-    if (cursor >= events.length || !gameState) return;
-
     const event = events[cursor];
-    const newState = { ...gameState };
+    if (!event || !gameState) return;
 
-    switch (event.type) {
-      case "tsumo": {
-        const actorHand = [...newState.tehais[event.actor], event.pai];
-        newState.tehais[event.actor] = actorHand;
-        break;
+    setGameState((prev) => {
+      if (!prev) return null;
+      const next = { ...prev };
+
+      if (event.type === 'tsumo') {
+        const newTehais = [...next.tehais];
+        newTehais[event.actor] = [...newTehais[event.actor], event.pai];
+        return { ...next, tehais: newTehais };
       }
 
-      case "dahai": {
-        const actorIndex = event.actor;
-        const tileToDiscard = event.pai;
+      if (event.type === 'dahai') {
+        const newTehais = [...next.tehais];
+        const newDiscards = [...next.discards];
         
-        const hand = [...newState.tehais[actorIndex]];
-        const tileIdx = hand.indexOf(tileToDiscard);
-        hand.splice(tileIdx, 1);
-        newState.tehais[actorIndex] = sortTiles(hand);
+        const hand = [...newTehais[event.actor]];
+        const idx = hand.indexOf(event.pai);
+        if (idx > -1) {
+          hand.splice(idx, 1);
+          newTehais[event.actor] = sortTiles(hand);
+        }
 
-        newState.discards[actorIndex] = [...newState.discards[actorIndex], tileToDiscard];
-        break;
+        newDiscards[event.actor] = [...newDiscards[event.actor], event.pai];
+        return { ...next, tehais: newTehais, discards: newDiscards };
       }
-    }
+      if (event.type === 'pon' || event.type === 'chi') {
+        const { actor, pai, consumed, target } = event;
+        const newTehais = [...next.tehais];
+        const hand = [...newTehais[actor]];
+        consumed.forEach(cTile => {
+          const idx = hand.indexOf(cTile);
+          if (idx > -1) hand.splice(idx, 1);
+        });
+        newTehais[actor] = sortTiles(hand);
+        const newDiscards = [...next.discards];
+        if (newDiscards[target].length > 0) {
+          newDiscards[target] = newDiscards[target].slice(0, -1);
+        }
 
-    setGameState(newState);
+        const newMelds = [...next.melds];
+        newMelds[actor] = [...newMelds[actor], [pai, ...consumed]];
+
+        return { ...next, tehais: newTehais, discards: newDiscards, melds: newMelds };
+      }
+
+      return next;
+    });
+
     setCursor(cursor + 1);
   };
 
@@ -101,6 +125,25 @@ function App() {
             <Tile id={gameState.dora_marker} size="40px" />
           </div>
         </div>
+        {/* Melds */}
+        {gameState.melds.map((playerMelds, index) => {
+        const callAreas = ["area-calls-br", "area-calls-tr", "area-calls-tl", "area-calls-bl"];
+        const areaMap = ["bottom", "right", "top", "left"];
+        
+        return (
+          <div key={`meld-player-${index}`} className={`placeholder-box ${callAreas[index]}`}>
+            <div className={`melds-container ${areaMap[index]}`}>
+              {playerMelds.map((meld, mIdx) => (
+                <div key={mIdx} className="meld-group">
+                  {meld.map((tileId, tIdx) => (
+                    <Tile key={tIdx} id={tileId} size="30px" />
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })}
 
         {/* Discards */}
         {gameState.discards?.map((discards, index) => {

@@ -8,6 +8,7 @@ export interface GameState {
   type: string;
   scores: number[];
   discards: string[][];
+  melds: string[][][];
 }
 
 export type Event = 

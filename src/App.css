@@ -132,3 +132,30 @@
   font-size: 0.8rem;
   color: #00FF7F;
 }
+
+/* Container for all melds of one player */
+.melds-container {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* A single set (e.g., a Pon of West) */
+.meld-group {
+  display: flex;
+  gap: 1px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 2px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Rotations to match the table perspective */
+.melds-container.right { transform: rotate(-90deg); }
+.melds-container.left { transform: rotate(90deg); }
+.melds-container.top { transform: rotate(180deg); }
+
+/* Optional: Add the "Drawn Tile" gap logic we discussed earlier */
+.hand-container > :nth-child(14) {
+  margin-left: 12px;
+}
