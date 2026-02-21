@@ -22,6 +22,7 @@ function App() {
           setGameState({
             bakaze: setup.bakaze,
             kyoku: setup.kyoku,
+            kyotaku: setup.kyotaku,
             honba: setup.honba,
             dora_marker: setup.dora_marker,
             oya: setup.oya,
@@ -51,6 +52,7 @@ function App() {
         return {
           bakaze: event.bakaze,
           kyoku: event.kyoku,
+          kyotaku: event.kyotaku,
           honba: event.honba,
           dora_marker: event.dora_marker,
           oya: event.oya,
@@ -98,7 +100,7 @@ function App() {
         const newRiichi = [...(next.riichi || [false, false, false, false])];
         newRiichi[event.actor] = true;
         
-        return { ...next, scores: newScores, riichi: newRiichi };
+        return { ...next, scores: newScores, riichi: newRiichi, kyotaku: (next.kyotaku || 0) + 1 };
       }
       if (event.type === 'pon' || event.type === 'chi') {
         const { actor, pai, consumed, target } = event;
@@ -186,6 +188,7 @@ function App() {
                 <div className="round-info">
                   <div className="round-name">
                     {gameState.bakaze}{gameState.kyoku}-{gameState.honba}
+                    {gameState.kyotaku > 0 && ` (+${gameState.kyotaku * 1000})`}
                   </div>
                   <div className="dora-display">
                     <Tile id={gameState.dora_marker} size="24px" />

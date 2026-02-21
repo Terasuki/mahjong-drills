@@ -7,6 +7,7 @@ export interface GameState {
   dora_marker: string;
   honba: number;
   kyoku: number;
+  kyotaku: number;
   oya: number;
   tehais: string[][];
   type: string;
@@ -20,7 +21,7 @@ export interface GameState {
 export type Event = 
   | { type: 'start_game'; aka_flag: boolean; kyoku_first: number }
   | { type: 'end_game'; scores: number[] }
-  | { type: 'start_kyoku'; bakaze: string; kyoku: number; honba: number; oya: number; tehais: string[][]; scores: number[], dora_marker: string }
+  | { type: 'start_kyoku'; bakaze: string; kyoku: number; kyotaku: number; honba: number; oya: number; tehais: string[][]; scores: number[], dora_marker: string }
   | { type: 'end_kyoku'}
   | { type: 'pon'; actor: number; consumed: string[]; pai: string; target: number }
   | { type: 'chi'; actor: number; consumed: string[]; pai: string; target: number }
