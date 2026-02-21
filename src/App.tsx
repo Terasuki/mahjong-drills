@@ -49,22 +49,23 @@ function App() {
     const next = { ...currentGS };
 
     if (event.type === 'start_kyoku') {
-        return {
-          bakaze: event.bakaze,
-          kyoku: event.kyoku,
-          kyotaku: event.kyotaku,
-          honba: event.honba,
-          dora_marker: event.dora_marker,
-          oya: event.oya,
-          tehais: event.tehais.map(hand => sortTiles(hand)),
-          discards: [[], [], [], []],
-          melds: [[], [], [], []],
-          riichi: [false, false, false, false],
-          isReaching: null,
-          scores: event.scores,
-          type: 'start_kyoku',
-        };
-      }
+      setIsPaused(true)
+      return {
+        bakaze: event.bakaze,
+        kyoku: event.kyoku,
+        kyotaku: event.kyotaku,
+        honba: event.honba,
+        dora_marker: event.dora_marker,
+        oya: event.oya,
+        tehais: event.tehais.map(hand => sortTiles(hand)),
+        discards: [[], [], [], []],
+        melds: [[], [], [], []],
+        riichi: [false, false, false, false],
+        isReaching: null,
+        scores: event.scores,
+        type: 'start_kyoku',
+      };
+    }
 
     if (event.type === 'tsumo') {
       const newTehais = [...next.tehais];
@@ -128,7 +129,7 @@ function App() {
   };
 
   useEffect(() => {
-    if (!currentEvent || isUsersTurn) return;
+    if (!currentEvent || isUsersTurn || isPaused) return;
 
     const timer = setTimeout(() => {
       setGameState(prev => prev ? applyEventToState(prev, currentEvent) : null);
@@ -136,7 +137,7 @@ function App() {
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [gameState, currentEvent, isUsersTurn]);
+  }, [gameState, currentEvent, isUsersTurn, isPaused]);
 
   const handlePlayerDiscard = (tileId: string) => {
     if (!isUsersTurn || !gameState || !currentEvent) return;
