@@ -1,3 +1,7 @@
+export interface DiscardTile {
+  id: string;
+  sideways: boolean;
+}
 export interface GameState {
   bakaze: string;
   dora_marker: string;
@@ -7,8 +11,10 @@ export interface GameState {
   tehais: string[][];
   type: string;
   scores: number[];
-  discards: string[][];
+  discards: DiscardTile[][];
   melds: string[][][];
+  riichi: boolean[];
+  isReaching: number | null;
 }
 
 export type Event = 

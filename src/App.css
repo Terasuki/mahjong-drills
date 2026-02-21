@@ -278,3 +278,44 @@
   /* Important: ensure the rotation center is correct if you have alignment issues */
   transform-origin: center;
 }
+
+/* The container for each player's discard pond */
+.discard-grid {
+  display: grid;
+  /* 6 tiles per row */
+  grid-template-columns: repeat(6, minmax(30px, auto)); 
+  grid-auto-rows: min-content;
+  gap: 2px;
+  padding: 5px;
+}
+
+/* Base wrapper for every discarded tile */
+.discard-tile-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;  /* Matches your tile size */
+  height: 40px; /* Standard vertical height */
+}
+
+/* The Riichi modification */
+.discard-tile-wrapper.riichi-sideways {
+  /* When sideways, the tile is wider than it is tall. 
+     We use a slight scale or margin adjustment to prevent overlap. */
+  transform: rotate(-90deg);
+  z-index: 10;
+}
+
+.score-item.is-riichi {
+  border-color: #ff4d4d; /* Bright Red */
+  color: #ff4d4d;
+  background: rgba(255, 77, 77, 0.15); /* Faint red glow */
+  box-shadow: inset 0 0 10px rgba(255, 77, 77, 0.2);
+  font-weight: bold;
+}
+
+/* If someone is BOTH Oya and Riichi, let's mix the colors or prioritize red */
+.score-item.is-oya.is-riichi {
+  border-color: #ff4d4d; 
+  outline: 1px solid #FFD700; /* Gold outline to show they are still Oya */
+}

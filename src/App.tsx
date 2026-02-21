@@ -1,7 +1,7 @@
 import Tile from './components/Tiles';
 import './App.css'
 import { useState, useEffect } from 'react';
-import type { GameState, Event } from './types';
+import type { GameState, Event, DiscardTile } from './types';
 import { sortTiles, getWind } from './utilities/mahjong';
 
 function App() {
@@ -28,6 +28,8 @@ function App() {
             tehais: setup.tehais.map(hand => sortTiles(hand)),
             discards: [[], [], [], []],
             melds: [[], [], [], []],
+            riichi: [false, false, false, false],
+            isReaching: null,
             scores: setup.scores,
             type: 'start_kyoku',
           });
@@ -55,6 +57,8 @@ function App() {
           tehais: event.tehais.map(hand => sortTiles(hand)),
           discards: [[], [], [], []],
           melds: [[], [], [], []],
+          riichi: [false, false, false, false],
+          isReaching: null,
           scores: event.scores,
           type: 'start_kyoku',
         };
@@ -77,8 +81,24 @@ function App() {
           newTehais[event.actor] = sortTiles(hand);
         }
 
-        newDiscards[event.actor] = [...newDiscards[event.actor], event.pai];
-        return { ...next, tehais: newTehais, discards: newDiscards };
+        const isRiichiDiscard = next.isReaching === event.actor;
+        const discardObject: DiscardTile = { id: event.pai, sideways: isRiichiDiscard };
+
+        newDiscards[event.actor] = [...newDiscards[event.actor], discardObject];
+        return { ...next, tehais: newTehais, discards: newDiscards, isReaching: null};
+      }
+
+      if (event.type === 'reach') {
+        return { ...next, isReaching: event.actor };
+      }
+
+      if (event.type === 'reach_accepted') {
+        const newScores = [...next.scores];
+        newScores[event.actor] -= 1000;
+        const newRiichi = [...(next.riichi || [false, false, false, false])];
+        newRiichi[event.actor] = true;
+        
+        return { ...next, scores: newScores, riichi: newRiichi };
       }
       if (event.type === 'pon' || event.type === 'chi') {
         const { actor, pai, consumed, target } = event;
@@ -149,12 +169,16 @@ function App() {
             <div className="info-center">
               <div className="scores-grid">
                 {/* Top Player (Index 2) */}
-                <div className={`score-item top ${gameState.oya === 2 ? 'is-oya' : ''}`}>
+                <div className={`score-item top 
+                  ${gameState.oya === 2 ? 'is-oya' : ''} 
+                  ${gameState.riichi[2] ? 'is-riichi' : ''}`}>
                   ({getWind(2, gameState.oya)}) {gameState.scores[2]}
                 </div>
 
                 {/* Left Player (Index 3) */}
-                <div className={`score-item left ${gameState.oya === 3 ? 'is-oya' : ''}`}>
+                <div className={`score-item left 
+                  ${gameState.oya === 3 ? 'is-oya' : ''} 
+                  ${gameState.riichi[3] ? 'is-riichi' : ''}`}>
                   ({getWind(3, gameState.oya)}) {gameState.scores[3]}
                 </div>
 
@@ -169,12 +193,16 @@ function App() {
                 </div>
 
                 {/* Right Player (Index 1) */}
-                <div className={`score-item right ${gameState.oya === 1 ? 'is-oya' : ''}`}>
+                <div className={`score-item right 
+                  ${gameState.oya === 1 ? 'is-oya' : ''} 
+                  ${gameState.riichi[1] ? 'is-riichi' : ''}`}>
                   ({getWind(1, gameState.oya)}) {gameState.scores[1]}
                 </div>
 
                 {/* Bottom Player (Index 0) */}
-                <div className={`score-item bottom ${gameState.oya === 0 ? 'is-oya' : ''}`}>
+                <div className={`score-item bottom 
+                  ${gameState.oya === 0 ? 'is-oya' : ''} 
+                  ${gameState.riichi[0] ? 'is-riichi' : ''}`}>
                   ({getWind(0, gameState.oya)}) {gameState.scores[0]}
                 </div>
               </div>
@@ -201,13 +229,18 @@ function App() {
         })}
 
           {/* Discards */}
-          {gameState.discards?.map((discards, index) => {
+          {gameState.discards?.map((playerDiscards, index) => {
             const areaMap = ['bottom', 'right', 'top', 'left'];
             return (
               <div key={`disc-${index}`} className={`placeholder-box area-disc-${areaMap[index]}`}>
                 <div className={`discard-grid ${areaMap[index]}`}>
-                  {discards.map((tileId, tIdx) => (
-                    <Tile key={tIdx} id={tileId} size="30px" />
+                  {playerDiscards.map((tile, tIdx) => (
+                    <div 
+                      key={tIdx} 
+                      className={`discard-tile-wrapper ${tile.sideways ? 'riichi-sideways' : ''}`}
+                    >
+                      <Tile id={tile.id} size="30px" />
+                    </div>
                   ))}
                 </div>
               </div>
