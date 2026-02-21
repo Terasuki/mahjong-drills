@@ -235,36 +235,29 @@
 .hand-container, .melds-container {
   display: flex;
   gap: 2px;
-  justify-content: flex-start; /* This works for Bottom, Top, and Left */
+  justify-content: flex-start;
   align-items: center;
   width: 100%;
   height: 100%;
 }
 
-/* Fix the Right side: 'flex-end' pulls the tiles to the visual top 
-   because the axis is inverted by -90deg rotation */
 .hand-container.right, 
 .melds-container.right { 
   justify-content: flex-end; 
 }
 
-/* Ensure the side containers are tall enough to fill the grid area 
-   since 'width: 100%' on a rotated element refers to the narrow grid width */
 .area-hand-left {
   display: flex;
   justify-content: center; 
-  align-items: flex-start; /* Aligns to top of the grid cell */
+  align-items: flex-start;
 }
 
-/* Right Hand: Starts at the Bottom */
 .area-hand-right {
   display: flex;
   justify-content: center;
-  /* Change this to flex-end to push the container to the bottom of the grid area */
   align-items: flex-end; 
 }
 
-/* Ensure the rotated containers fill their tracks */
 .hand-container.left, 
 .hand-container.right {
   width: 100%; 
@@ -273,49 +266,56 @@
 
 .hand-container.right, 
 .melds-container.right { 
-  /* Reset this to flex-start; let the parent's 'align-items' handle the vertical position */
   justify-content: flex-start; 
-  /* Important: ensure the rotation center is correct if you have alignment issues */
   transform-origin: center;
 }
 
-/* The container for each player's discard pond */
 .discard-grid {
   display: grid;
-  /* 6 tiles per row */
   grid-template-columns: repeat(6, minmax(30px, auto)); 
   grid-auto-rows: min-content;
   gap: 2px;
   padding: 5px;
 }
 
-/* Base wrapper for every discarded tile */
 .discard-tile-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 30px;  /* Matches your tile size */
-  height: 40px; /* Standard vertical height */
+  width: 30px;
+  height: 40px;
 }
 
-/* The Riichi modification */
 .discard-tile-wrapper.riichi-sideways {
-  /* When sideways, the tile is wider than it is tall. 
-     We use a slight scale or margin adjustment to prevent overlap. */
   transform: rotate(-90deg);
   z-index: 10;
 }
 
 .score-item.is-riichi {
-  border-color: #ff4d4d; /* Bright Red */
+  border-color: #ff4d4d;
   color: #ff4d4d;
-  background: rgba(255, 77, 77, 0.15); /* Faint red glow */
+  background: rgba(255, 77, 77, 0.15);
   box-shadow: inset 0 0 10px rgba(255, 77, 77, 0.2);
   font-weight: bold;
 }
 
-/* If someone is BOTH Oya and Riichi, let's mix the colors or prioritize red */
 .score-item.is-oya.is-riichi {
   border-color: #ff4d4d; 
-  outline: 1px solid #FFD700; /* Gold outline to show they are still Oya */
+  outline: 1px solid #FFD700;
+}
+
+.area-disc-bottom, .area-disc-top, .area-disc-left, .area-disc-right {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.melds-container {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 8px;
+  padding: 5px;
+  align-items: flex-start;
+  width: 100%;
+  height: 100%;
 }
