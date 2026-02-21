@@ -1,6 +1,7 @@
 export interface DiscardTile {
   id: string;
   sideways: boolean;
+  tsumogiri: boolean;
 }
 export interface GameState {
   bakaze: string;

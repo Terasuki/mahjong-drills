@@ -85,7 +85,11 @@ function App() {
         }
 
         const isRiichiDiscard = next.isReaching === event.actor;
-        const discardObject: DiscardTile = { id: event.pai, sideways: isRiichiDiscard };
+        const discardObject: DiscardTile = { 
+          id: event.pai, 
+          sideways: isRiichiDiscard,
+          tsumogiri: event.tsumogiri
+        };
 
         newDiscards[event.actor] = [...newDiscards[event.actor], discardObject];
         return { ...next, tehais: newTehais, discards: newDiscards, isReaching: null};
@@ -252,7 +256,7 @@ function App() {
                       key={tIdx} 
                       className={`discard-tile-wrapper ${tile.sideways ? 'riichi-sideways' : ''}`}
                     >
-                      <Tile id={tile.id} size="30px" />
+                      <Tile id={tile.id} size="30px" tsumogiri={tile.tsumogiri}/>
                     </div>
                   ))}
                 </div>
