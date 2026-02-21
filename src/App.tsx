@@ -8,6 +8,7 @@ function App() {
   const [events, setEvents] = useState<Event[]>([]);
   const [cursor, setCursor] = useState(0);
   const [gameState, setGameState] = useState<GameState | null>(null);
+  const [showAllHands, setShowAllHands] = useState(false);
 
   useEffect(() => {
     fetch('/test.json')
@@ -146,6 +147,14 @@ function App() {
           >
             Next Move
           </button>
+
+          <button 
+            className="toggle-btn" 
+            onClick={() => setShowAllHands(!showAllHands)}
+            style={{ marginTop: '10px', backgroundColor: showAllHands ? '#4CAF50' : '#666' }}
+          >
+            {showAllHands ? "Hide Hands" : "Show All Hands"}
+          </button>
         </div>
       </aside>
       <main className="game-area">
@@ -154,12 +163,13 @@ function App() {
           {/* Render Hands */}
           {gameState.tehais.map((hand, index) => {
             const areaMap = ['bottom', 'right', 'top', 'left'];
+            const isHidden = !showAllHands && index !== 0;
             
             return (
               <div key={index} className={`placeholder-box area-hand-${areaMap[index]}`}>
                 <div className={`hand-container ${areaMap[index]}`}>
                   {hand.map((tileId, tIdx) => (
-                    <Tile key={tIdx} id={tileId} size='35px' />
+                    <Tile key={tIdx} id={tileId} isBack={isHidden} size='35px' />
                   ))}
                 </div>
               </div>
@@ -191,7 +201,7 @@ function App() {
                     {gameState.kyotaku > 0 && ` (+${gameState.kyotaku * 1000})`}
                   </div>
                   <div className="dora-display">
-                    <Tile id={gameState.dora_marker} size="24px" />
+                    <Tile id={gameState.dora_marker} size="24px"/>
                   </div>
                 </div>
 
