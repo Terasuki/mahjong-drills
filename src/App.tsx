@@ -12,6 +12,7 @@ function App() {
   const [isPaused, setIsPaused] = useState(false);
   const [correctCount, setCorrectCount] = useState(0);
   const [mistakeCount, setMistakeCount] = useState(0);
+  const [debugMode, setDebugMode] = useState(false);
 
   const currentEvent = events[cursor];
   const isUsersTurn = currentEvent?.type === 'dahai' && currentEvent?.actor === 0 && !gameState?.riichi[0];
@@ -194,12 +195,18 @@ function App() {
           >
             {showAllHands ? "Hide Hands" : "Show Hands"}
           </button>
+          <button 
+          onClick={() => setDebugMode(!debugMode)}
+          style={{ marginTop: '10px', backgroundColor: debugMode ? '#e67e22' : '#666' }}
+        >
+          {"Debug"}
+        </button>
         </div>
       </aside>
 
       <main className="game-area">
         <div className="table-grid-wrapper">
-          <div className="table-grid">
+          <div className={`table-grid ${debugMode ? 'debug-on' : ''}`}>
             {gameState.tehais.map((hand, index) => {
               const areaMap = ['bottom', 'right', 'top', 'left'];
               const isPlayer0 = index === 0;

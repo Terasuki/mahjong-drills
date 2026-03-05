@@ -55,7 +55,6 @@
 
 .table-grid {
   flex: 1;
-  border: 3px solid #00FF7F;
   display: grid;
   
   grid-template-columns: 1fr 5fr 5fr 5fr 1fr;
@@ -75,7 +74,6 @@
   overflow: hidden; 
 }
 
-/* --- Generic styling for placeholders so we can see them --- */
 .placeholder-box {
   display: flex;
   justify-content: center;
@@ -85,28 +83,26 @@
   background: rgba(255,255,255,0.05);
 }
 
-/* Helper classes to assign React divs to grid areas and match mockup colors */
-.area-hand-top { grid-area: hand-top; border: 2px solid blue; }
-.area-hand-bottom { grid-area: hand-bottom; border: 2px solid blue; }
-.area-hand-left { grid-area: hand-left; border: 2px solid blue; }
-.area-hand-right { grid-area: hand-right; border: 2px solid blue; }
+.area-hand-top { grid-area: hand-top; }
+.area-hand-bottom { grid-area: hand-bottom; }
+.area-hand-left { grid-area: hand-left; }
+.area-hand-right { grid-area: hand-right; }
 
-.area-disc-top { grid-area: disc-top; border: 2px solid white; }
-.area-disc-bottom { grid-area: disc-bottom; border: 2px solid white; }
-.area-disc-left { grid-area: disc-left; border: 2px solid white; }
-.area-disc-right { grid-area: disc-right; border: 2px solid white; }
+.area-disc-top { grid-area: disc-top; }
+.area-disc-bottom { grid-area: disc-bottom; }
+.area-disc-left { grid-area: disc-left; }
+.area-disc-right { grid-area: disc-right; }
 
-.area-calls-tl { grid-area: calls-tl; border: 2px solid red; }
-.area-calls-tr { grid-area: calls-tr; border: 2px solid red; }
-.area-calls-bl { grid-area: calls-bl; border: 2px solid red; }
-.area-calls-br { grid-area: calls-br; border: 2px solid red; }
+.area-calls-tl { grid-area: calls-tl; }
+.area-calls-tr { grid-area: calls-tr; }
+.area-calls-bl { grid-area: calls-bl; }
+.area-calls-br { grid-area: calls-br; }
 
 .area-info {
   grid-area: info;
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 2px solid cyan;
   background: rgba(0, 255, 255, 0.05);
 }
 
@@ -318,4 +314,31 @@
   align-items: flex-start;
   width: 100%;
   height: 100%;
+}
+
+/* Apply them only when debug-on is active */
+.table-grid.debug-on {
+  border: 3px solid #00FF7F;
+}
+
+.debug-on .area-hand-top, 
+.debug-on .area-hand-bottom, 
+.debug-on .area-hand-left, 
+.debug-on .area-hand-right { border: 2px solid blue; }
+
+.debug-on .area-disc-top, 
+.debug-on .area-disc-bottom, 
+.debug-on .area-disc-left, 
+.debug-on .area-disc-right { border: 2px solid white; }
+
+.debug-on .area-calls-tl, 
+.debug-on .area-calls-tr, 
+.debug-on .area-calls-bl, 
+.debug-on .area-calls-br { border: 2px solid red; }
+
+.debug-on .area-info { border: 2px solid cyan; }
+
+/* Optional: Make placeholders visible during debug */
+.debug-on .placeholder-box {
+  background: rgba(255, 255, 255, 0.1);
 }
