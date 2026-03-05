@@ -3,6 +3,7 @@ export interface DiscardTile {
   sideways: boolean;
   tsumogiri: boolean;
 }
+
 export interface GameState {
   bakaze: string;
   dora_marker: string;

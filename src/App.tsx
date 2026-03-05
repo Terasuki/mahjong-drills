@@ -10,9 +10,11 @@ function App() {
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [showAllHands, setShowAllHands] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [correctCount, setCorrectCount] = useState(0);
+  const [mistakeCount, setMistakeCount] = useState(0);
 
   const currentEvent = events[cursor];
-  const isUsersTurn = currentEvent?.type === 'dahai' && currentEvent?.actor === 0;
+  const isUsersTurn = currentEvent?.type === 'dahai' && currentEvent?.actor === 0 && !gameState?.riichi[0];
 
   useEffect(() => {
     fetch('/test.json')
@@ -49,7 +51,6 @@ function App() {
     const next = { ...currentGS };
 
     if (event.type === 'start_kyoku') {
-      setIsPaused(true)
       return {
         bakaze: event.bakaze,
         kyoku: event.kyoku,
@@ -65,6 +66,10 @@ function App() {
         scores: event.scores,
         type: 'start_kyoku',
       };
+    }
+
+    if (event.type === 'end_kyoku') {
+      setIsPaused(true)
     }
 
     if (event.type === 'tsumo') {
@@ -95,8 +100,8 @@ function App() {
     }
 
     if (event.type === 'reach') {
-        return { ...next, isReaching: event.actor };
-      }
+      return { ...next, isReaching: event.actor };
+    }
 
     if (event.type === 'reach_accepted') {
       const newScores = [...next.scores];
@@ -142,13 +147,15 @@ function App() {
   const handlePlayerDiscard = (tileId: string) => {
     if (!isUsersTurn || !gameState || !currentEvent) return;
 
-    if (currentEvent.type === 'dahai' && tileId !== currentEvent.pai) {
-      console.log("corrent tile", currentEvent.pai);
-      return
+    if (currentEvent.type === 'dahai') {
+      if (tileId === currentEvent.pai) {
+        setCorrectCount(prev => prev + 1);
+        setGameState(prev => prev ? applyEventToState(prev, currentEvent) : null);
+        setCursor(prev => prev + 1);
+      } else {
+        setMistakeCount(prev => prev + 1);
+      }
     }
-
-    setGameState(prev => prev ? applyEventToState(prev, currentEvent) : null);
-    setCursor(prev => prev + 1);
   };
 
   if (!gameState) return <div>Loading...</div>;
@@ -157,9 +164,21 @@ function App() {
     <div className="app-container">
       <aside className="sidebar">
         <div className="controls-section">
-          <h2>Mahjong Trainer</h2>
+          <h2>Trainer</h2>
+
+          {/* Performance Counter */}
+        <div className="stats-container" style={{ marginBottom: '20px', padding: '10px', background: '#222', borderRadius: '8px' }}>
+          <div style={{ color: '#4CAF50', fontWeight: 'bold' }}>Correct: {correctCount}</div>
+          <div style={{ color: '#f44336', fontWeight: 'bold' }}>Mistakes: {mistakeCount}</div>
+          <div style={{ fontSize: '0.8em', color: '#ccc', marginTop: '5px' }}>
+            Accuracy: {correctCount + mistakeCount > 0 
+              ? ((correctCount / (correctCount + mistakeCount)) * 100).toFixed(1) 
+              : 0}%
+          </div>
+        </div>
+        
           <div className={`status-indicator ${isUsersTurn ? 'active' : ''}`}>
-           {isUsersTurn ? "👉 YOUR TURN" : "Opponent is thinking..."}
+           {isUsersTurn ? "Player Action" : "Opponent is playing..."}
         </div>
           <button onClick={() => setIsPaused(!isPaused)}>
             {isPaused ? "Resume" : "Pause"}
@@ -169,7 +188,7 @@ function App() {
             onClick={() => setShowAllHands(!showAllHands)}
             style={{ marginTop: '10px', backgroundColor: showAllHands ? '#4CAF50' : '#666' }}
           >
-            {showAllHands ? "Hide Hands" : "Show All Hands"}
+            {showAllHands ? "Hide Hands" : "Show Hands"}
           </button>
         </div>
       </aside>
