@@ -72,6 +72,10 @@ function App() {
       setIsPaused(true)
     }
 
+    if (event.type === 'end_game') {
+      setCursor(0)
+    }
+
     if (event.type === 'tsumo') {
       const newTehais = [...next.tehais];
       newTehais[event.actor] = [...newTehais[event.actor], event.pai];
